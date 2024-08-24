@@ -20,7 +20,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 def hinge(X_prob, classes=None, y=None):
     """
-    Computes non-conformity scores for conformal classifiers.
+    Computes non-conformity scores for conformal classifiers - .
 
     Parameters
     ----------
