@@ -136,6 +136,68 @@ def margin(X_prob, classes=None, y=None):
              - X_prob[i, c]) for c in range(X_prob.shape[1])]
             for i in range(len(X_prob))])
     return result
+def brier_score(X_prob, classes=None, y=None):
+    """Computes non-conformity scores for conformal classifiers.
+
+    Parameters
+    ----------
+    X_prob : array-like of shape (n_samples, n_classes)
+        predicted class probabilities
+    classes : array-like of shape (n_classes,), default=None
+        class names
+    y : array-like of shape (n_samples,), default=None
+        correct target values
+
+    Returns
+    -------
+    scores : ndarray of shape (n_samples,) or (n_samples, n_classes)
+        non-conformity scores. The shape is (n_samples, n_classes)
+        if classes and y are None.
+
+    Examples
+    --------
+    Assuming that ``X_prob`` is an array with predicted probabilities and
+    ``classes`` and ``y`` are vectors with the class names (in order) and
+    correct class labels, respectively, the non-conformity scores are generated 
+    by:
+
+    .. code-block:: python
+
+       from crepes.extras import margin
+        
+       alphas = margin(X_prob, classes, y)
+
+    The above results in that ``alphas`` is assigned a vector of the same length 
+    as ``X_prob`` with a non-conformity score for each object, here
+    defined as the highest predicted probability for a non-correct class label 
+    minus the predicted probability for the correct class label. These scores can
+    be used when fitting a :class:`.ConformalClassifier` or calibrating a 
+    :class:`.WrapClassifier`. Non-conformity scores for test objects, for which 
+    ``y`` is not known, can be obtained from the corresponding predicted 
+    probabilities (``X_prob_test``) by:
+
+    .. code-block:: python
+
+       alphas_test = margin(X_prob_test)
+
+    The above results in that ``alphas_test`` is assigned an array of the same
+    shape as ``X_prob_test`` with non-conformity scores for each class in the 
+    columns for each test object.
+
+    """
+    if y is not None:
+        class_indexes = np.array(
+            [np.argwhere(classes == y[i])[0][0] for i in range(len(y))])
+        result = np.array([
+            (np.max(X_prob[i, [j != class_indexes[i]
+                               for j in range(X_prob.shape[1])]])
+             - X_prob[i, class_indexes[i]]) for i in range(len(X_prob))])
+    else:
+        result = np.array([
+            [(np.max(X_prob[i, [j != c for j in range(X_prob.shape[1])]])
+             - X_prob[i, c]) for c in range(X_prob.shape[1])]
+            for i in range(len(X_prob))])
+    return result
 
 def binning(values, bins=10):
     """
