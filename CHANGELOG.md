@@ -1,5 +1,35 @@
 # Changelog
+
+## v0.7.1 (21/09/2024)
+
+### Features
+
+- The `calibrate` methods of the classes `WrapClassifier` and `WrapRegressor` now take an additional argument `seed`, for setting the state of the random number generator. This allows for `predict_p` and `predict_set` of the former class and `predict_int` and `predict_cps` of the latter class as well as `evaluate` for both classes to become deterministic. The methods `predict_p`, `predict_set`, `predict_int` ,`predict_cps` and `evaluate` of these classes also have an argument `seed`, which can be used to over-ride any setting by the `calibrate` method. In addition, the corresponding methods of the classes `ConformalClassifier` and `ConformalPredictiveSystem` also include the argument `seed` for the same purpose. (The methods of `ConformalRegressor` currently contains no stochastic components and there is hence no need for a seed.) Thanks to @egonmedhatten and @tuvelofstrom for suggesting this extension.
 	
+- The `predict_p` methods of the classes `ConformalClassifier` and `WrapClassifier` now takes an optional argument `smoothing` to allow for generating both smoothed and non-smoothed p-values (default: `smoothing=True`).
+
+- The default value for the parameter `smoothing` of the `predict_set` and `evaluate` methods has been changed to `True`.
+ 
+- The class `DifficultyEstimator` in `crepes.extras` now includes a parameter `f` for providing a function to compute the difficulty estimates.
+	
+### Fixes
+
+- The documentation for the class `MondrianCategorizer` in `crepes.extras` has been corrected.
+	
+## v0.7.0 (27/06/2024)
+
+### Features
+
+- The class `MondrianCategorizer` was added to `crepes.extras`, for generating categories to be used by Mondrian conformal classifiers, regressors and predictive systems. See [the documentation](https://crepes.readthedocs.io/en/latest/crepes.extras.html) for the interface to objects of the class through the `fit` and `apply` methods.
+
+- The class `WrapRegressor` has been updated so that the method `calibrate` allows for specifying an (optional) difficulty estimator and (optional) Mondrian categorizer, which are used both for calibration and making predictions, instead of requiring that difficulty estimates and Mondrian categories are provided separately for these tasks. The methods `predict_int`, `predict_cps` and `evaluate` no longer require `sigmas` and `bins` to be provided for normalized and Mondrian conformal regressors and predictive systems. Thanks to @tuvelofstrom for suggestions along these lines.
+
+- The class `WrapClassifier` has been updated so that the method `calibrate` allows for specifying an (optional) Mondrian categorizer, which is used both for calibration and making predictions. The methods `predict_p`, `predict_set` and `evaluate` no longer require `bins` to be provided for Mondrian conformal classifiers.
+	
+### Fix
+
+- Label vectors represented by pandas.Series are converted to NumPy arrays to avoid indexing issues. Thanks to @valeman for pointing this out.
+		
 ## v0.6.2 (02/02/2024)
 	
 ### Fixes
